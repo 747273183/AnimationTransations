@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".RevealActivity">
+
+
+    <CheckBox
+        android:id="@+id/cb_play_animation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Play Animation"
+        />
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_centerInParent="true"
+        android:visibility="invisible"
+        android:background="@color/colorPrimary"
+        />
+
+    <Button
+        android:id="@+id/btn_switch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="switch"
+        android:textAllCaps="false"
+        android:onClick="onClick"
+        android:layout_alignParentBottom="true"
+        />
+
+</RelativeLayout>
