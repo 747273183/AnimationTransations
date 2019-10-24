@@ -1,4 +1,4 @@
-package com.example.animationtransations;
+package com.example.animationtransations.reveal;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -12,6 +12,8 @@ import android.widget.CompoundButton;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.animationtransations.R;
 
 public class RevealActivity extends AppCompatActivity {
     private CheckBox cb_play_animation;

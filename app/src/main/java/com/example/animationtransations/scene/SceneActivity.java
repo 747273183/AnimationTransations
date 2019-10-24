@@ -1,4 +1,4 @@
-package com.example.animationtransations;
+package com.example.animationtransations.scene;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,6 +11,8 @@ import android.transition.TransitionInflater;
 import android.transition.TransitionManager;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.example.animationtransations.R;
 
 public class SceneActivity extends AppCompatActivity {
 

@@ -17,10 +17,10 @@
 - 定义转场动画的时机
 - 定义转场动画的方法       
 #### 视觉连续性的两个好处
-1. 动的东西,因为是动画,它能吸引用户的注意力.
-也就是说我们可以合理的控制用户的聚焦点,让用户把注意力合理的放在这个变化的部分.
-2. 合理设置的动画的效果,能够引导用户,让用户知道手机屏幕上的这个UI元素它从哪里来
-   到哪里去,发生了怎么样的变化.它能提供视觉的连续性,从而让用户更流畅的使用我们的应用程序
+1. 动的东西,因为是动画,它能**吸引用户的注意力**.
+也就是说我们可以**合理的控制用户的聚焦点**,**让用户把注意力合理的放在这个变化的部分**.
+2. 合理设置的动画的效果,能够**引导用户,让用户知道手机屏幕上的这个UI元素它从哪里来
+   到哪里去**,发生了怎么样的变化.它能提供视觉的连续性,从而让用户更流畅的使用我们的应用程序
 #### 在什么样的时机下添加转场动画呢?
 - 视觉状态改变            
   视觉状态的改变并不只是手机的屏幕发生了切换,比如activity的切换那当然是转场,单一视图当它的状态
@@ -363,7 +363,104 @@ android.transition
    ```
 ## 第四章 Activity间的转场动画
 ### 4-1 转场动画-理论基础
-
+ ![activity_sence.xml](/readme/img/a7.png)          
+1. 转场实现方法    
+   如果我们使用startActivity方法,只给它传一个Intent,Activity转场效果        
+   是定义在ActivityOptions里面的.            
+   ActivityOptions
+   options=ActivityOptions.makeSceneTransitionAnimation(this);        
+   startActivity(intent,options.toBundle());
+2. 转场的效果    
+- Fade 淡入淡出
+- Slide 平移
+- Explode 爆炸效果
+3. 启用转场         
+   ![activity_sence.xml](/readme/img/a8.png)
+   这个是xml实现方式,没有实验成功
 ### 4-2 转场动画-代码实践
+1. 案例效果图    
+![activity_sence.xml](/readme/img/a3.gif)
+2. 实现步骤     
+   ```
+       package com.example.animationtransations.activity;
+    
+        import android.app.ActivityOptions;
+        import android.content.Intent;
+        import android.os.Build;
+        import android.os.Bundle;
+        import android.transition.Explode;
+        import android.transition.Transition;
+        import android.util.Pair;
+        import android.view.View;
+        
+        import androidx.annotation.RequiresApi;
+        import androidx.appcompat.app.AppCompatActivity;
+        
+        import com.example.animationtransations.R;
+        
+        public class FirstActivity extends AppCompatActivity {
+    
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_first);
+        }
+    
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+        public void onClick(View view) {
+            int resID=-1;
+            switch (view.getId())
+            {
+                case  R.id.img1:
+                    resID=R.drawable.pic1;
+                    break;
+                case  R.id.img2:
+                    resID=R.drawable.pic2;
+                    break;
+                case  R.id.img3:
+                    resID=R.drawable.pic3;
+                    break;
+                case  R.id.img4:
+                    resID=R.drawable.pic4;
+                    break;
+            }
+    
+            Intent intent=new Intent(this,SecondActivity.class);
+            intent.putExtra("resID",resID);
+    
+            //自定义转场动画
+            Transition transition=new Explode();
+            //排除状态栏变化
+            transition.excludeTarget(android.R.id.statusBarBackground,true);
+    
+            getWindow().setEnterTransition(transition);
+            getWindow().setExitTransition(transition);
+    
+          /*  getWindow().getReenterTransition();//添加再次进入的效果
+            getWindow().setSharedElementEnterTransition(transition);//为共享元素添加进场效果
+            getWindow().setSharedElementExitTransition(transition);//为共享元素添加离场效果*/
+    
+            //设置转场动画
+            //设置共享元素(让视觉更具有连续性)
+            Pair<View, String> shareElement = Pair.create(view, "img");
+            ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(this,shareElement);
+            startActivity(intent,options.toBundle());
+        }
+    }
+   ```      
 ## 第五章 总结
 ### 5-1 课程总结
+- 转场        
+  我们可以把Android屏幕看作一个舞台,那在这个舞台每一个视觉状态就是叫做一个场景,当     
+  场景发生切换的时候就叫做转场,当发生转场时我们可以定义转场动画,让他产生视觉连续性.        
+1. 当单一的一个视图状态(颜色,高宽可见性属性等)发生变化的时候我们可通过揭露效果呈现出来      
+   让用户感知这个变化的过程.
+2. 对于场景之间的切换我们可以使用android的转场动画框架来定义场景之间的切换.   
+     
+3. 当Activity之间发生跳转时,我们也可以为进场activity和离场activity设置转场的效果.     
+   如果期间有共享元素我们也可以指定共享元素在进场和离场时的动画效果.  
+         
+- 视觉连续性         
+  好处是合理的吸引用户的注意力,让用户知道窗口的内容是从哪来到哪去的,从而更好的理解窗口内容的        
+  的变化,更流畅的使用我们的应用程序.
+
