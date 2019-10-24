@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, RevealActivity.class));
                 break;
             case R.id.btn_scense:
+                startActivity(new Intent(MainActivity.this, SceneActivity.class));
                 break;
         }
     }

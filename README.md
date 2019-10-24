@@ -151,10 +151,219 @@ public class RevealActivity extends AppCompatActivity {
 ```
 ## 第三章 多视图的转场动画
 ### 3-1 转场动画框架介绍
+之前我们学习的视图动画系统和属性动画系统都是针对单一视图的.      
+而在转场动画当中一个场景下有多个视图,如何让多个视图产生不同的运动效果.        
+Android中提供了转场动画框架:      
+android.transition      
+- Scene     
+  **场景**.我们知道屏幕上的每一屏画面都是一棵视图树,我们可以把一棵视图树,       
+  以及这棵视图树所有状态的那一瞬间叫做一个场景.
+  
+ **如何定义场景**.可以使用Scene.getSceneForLayout(sceneRoot,R.layout.sence_overview,this)
+  
+- Transition    
+  **转换**.       
+  (1)Fade:淡入淡出      
+  (2)ChangeBounds:改变边界,比如位置长高等.         
+  (3)AutoTransition:Android预定义的动画效果.如果我们不指定任何自定义的Transition,
+  那么Android就会使用这个默认的Transition效果来应用场景的变化.       
+  **如何定义Transition**            
+  TransitionInflater.from(getBaseContext()).inflateTransition(R.transition.transition);     
+  这个transition是和视图动画中的Animation以及属性动画中的Animator是类似的,定义的方式也都同时有两种:       
+  一种就是从资源文件中加载,另一种就是在java代码中直接定义.**我们推荐的是在资源文件定义这个动画效果**.       
+  **原因有两个**:**一是**在资源文件中定义的动画效果通用性更好,不同的java类中都可以加载同一个资源文件;**第二就是**     
+  复杂性的控制,随着我们学习的深入,我们定义的动画可能越来越复杂,如果使用java代码定义,那么这个代码可能会非常长,而且      
+  逻辑非常复杂.
+- TransitionManager         
+  **有了场景对象,也有了变换对象,接下来就可以转场了**.         
+  TransitionManager.go(mTragetScene,transition);        
+  第一个参数是跳转到的那个场景,第二个参数是变化类型,是可选的,如果没有指定,使用默认的AutoTransition
 ### 3-2 转场动画应用
+1. 效果展示     
+   它涉及到一个java类SceneActivity,三个布局文件:activity_sence.xml       
+   ![activity_sence.xml](/readme/img/a4.png)        
+   第一个场景:scene_overview.xml         
+   ![activity_sence.xml](/readme/img/a5.png)
+   ```
+       <?xml version="1.0" encoding="utf-8"?>
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+        <ImageView
+        android:id="@+id/iv_big"
+        android:layout_width="400dp"
+        android:layout_height="300dp"
+        android:src="@drawable/chang_bai" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+        
+                <TextView
+                    android:id="@+id/tv_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="长白山脉"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+        
+                <ImageButton
+                    android:id="@+id/ib_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="onClick"
+                    android:src="@drawable/ic_info_black_24dp" />
+        
+            </LinearLayout>
+        
+            <TextView
+                android:id="@+id/tv_area"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="吉林省东南部地区" />
+        </LinearLayout>
+   ```
+   第二个场景:scene_info.xml         
+   ![activity_sence.xml](/readme/img/a6.png)
+   ```
+       <?xml version="1.0" encoding="utf-8"?>
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+    
+        <ImageView
+            android:id="@+id/iv_big"
+            android:layout_width="300dp"
+            android:layout_height="200dp"
+            android:src="@drawable/chang_bai" />
+    
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+    
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="长白山脉"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+    
+            <ImageButton
+                android:id="@+id/ib_close"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onClick"
+                android:src="@drawable/ic_close_black_24dp" />
+    
+        </LinearLayout>
+    
+        <TextView
+            android:id="@+id/tv_area"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="吉林省东南部地区"
+            android:textSize="16sp" />
+    
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+    
+            <TextView
+                android:id="@+id/tv_introduce"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="长白山脉位于吉林省白山市东南部，是鸭绿江、松花江和图们江的发源地。是中国满族的发祥地和满族文化圣山。长白山脉的“长白”二字还有一个美好的寓意，即为长相守，到白头，代表着人们对忠贞与美满爱情的向往与歌颂。长白山最早见于中国4000多年前的文字记载中，《山海经》称“不咸山”，北魏称“徒太山”，唐称“太白山”，金始称“长白山”。" />
+        </ScrollView>
+    
+    
+    </LinearLayout>
+   ```
+2. java代码
+   ```
+       package com.example.animationtransations;
+
+        import androidx.annotation.RequiresApi;
+        import androidx.appcompat.app.AppCompatActivity;
+        
+        import android.os.Build;
+        import android.os.Bundle;
+        import android.transition.Scene;
+        import android.transition.TransitionManager;
+        import android.view.View;
+        import android.view.ViewGroup;
+        
+        public class SceneActivity extends AppCompatActivity {
+
+        private Scene mOverViewScene;
+        private Scene mInfoScene;
+    
+        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_scene);
+    
+            ViewGroup sceneRoot=findViewById(R.id.scense_root);//获得舞台
+    
+                mOverViewScene= Scene.getSceneForLayout(sceneRoot,R.layout.scene_overview,getBaseContext());
+                mInfoScene = Scene.getSceneForLayout(sceneRoot, R.layout.scene_info, getBaseContext());
+    
+                //默认是mOverViewScene场景
+                TransitionManager.go(mOverViewScene);
+    
+    
+    
+    
+        }
+    
+        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+        public void onClick(View v)
+        {
+            switch (v.getId())
+            {
+                case R.id.ib_info:
+                    TransitionManager.go(mInfoScene);
+                    break;
+                case R.id.ib_close:
+                    TransitionManager.go(mOverViewScene);
+                    break;
+            }
+        }
+    }
+     
+   ```
 ### 3-3 自定义转场效果
+1. 自定义转场动画 src/transition/transition.xml
+   ```
+   <?xml version="1.0" encoding="utf-8"?>
+        <transitionSet xmlns:android="http://schemas.android.com/apk/res/android">
+            <changeImageTransform android:duration="3000">
+                <targets android:targetId="@id/iv_big"></targets>
+            </changeImageTransform>
+        <fade
+            android:duration="3000"
+            android:startDelay="1000">
+        </fade>
+       </transitionSet>
+   ```
+2. 设置自定义转场效果        
+   ```
+   Transition transition= TransitionInflater.from(getBaseContext()).inflateTransition(R.transition.transition);
+    TransitionManager.go(mInfoScene,transition);
+   ```
 ## 第四章 Activity间的转场动画
 ### 4-1 转场动画-理论基础
+
 ### 4-2 转场动画-代码实践
 ## 第五章 总结
 ### 5-1 课程总结
